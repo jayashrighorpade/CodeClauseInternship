@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub Explorer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+
+
+
+
+<body>
+
+<h1>GitHub Explorer</h1>
+<br><br><br>
+
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'Tab1')">Repositories</button>
+  <button class="tablinks" onclick="openTab(event, 'Tab2')">Topics</button>
+  <button class="tablinks" onclick="openTab(event, 'Tab3')">Users</button>
+</div>
+
+<div id="Tab1" class="tabcontent">
+  <h3>Repositories</h3>
+  <p id="tab1Content"></p>
+  <!--<label for="topic-search-input">Enter a repository to search for:</label>-->
+  <input type="text" id="repo-search-input" placeholder="Enter a Repository to search for">
+  <button onclick="generateTab1Content()">Search</button>
+  <ul id="search-results">
+</div>
+
+<div id="Tab2" class="tabcontent">
+  <h3>Topics</h3>
+  <p id="tab2Content"></p>
+  <label for="topic-search-input">Enter a topic to search for:</label>
+  <input type="text" id="topic-search-input">
+  <button onclick="generateTab2Content()">Search</button>
+  <ul id="search-results">
+</div>
+
+<div id="Tab3" class="tabcontent">
+  <h3>Users</h3>
+  <p id="tab3Content"></p>
+  <form class="form" id="form">
+    <input type="text" id="search" autocomplete="off" placeholder="Search a Github Username"/>
+  </form>
+  <script src="https://kit.fontawesome.com/1234567890.js" crossorigin="anonymous"></script>
+  <main id="main"></main>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js"
+      integrity="sha512-DZqqY3PiOvTP9HkjIWgjO6ouCbq+dxqWoJZ/Q+zPYNHmlnI2dQnbJ5bxAHpAMw+LXRm4D72EIRXzvcHQtE8/VQ=="
+      crossorigin="anonymous">
+    </script>
+
+    <script src="script.js"></script>
+</div>
+
+<script>
+document.getElementById("Tab1").style.display = "block";
+
+function generateTab1Content() {
+   
+  const searchInput = document.getElementById("repo-search-input");
+  const query = searchInput.value.trim();
+  /*if (!query) {
+    alert("Please enter a repository name to search for.");
+    return;
+  }*/
+  
+  const api_url = `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc`;
+  fetch(api_url)
+    .then(response => response.json())
+    .then(data => {
+      const searchResults = document.getElementById("search-results");
+      searchResults.innerHTML = "";
+      for (const repo of data.items) {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = repo.html_url;
+        a.target = "_blank";
+        a.textContent = repo.full_name;
+        li.appendChild(a);
+        searchResults.appendChild(li);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      alert("There was an error retrieving the search results.");
+    });
+    
+}
+
+function generateTab2Content() {
+  const searchInput2 = document.getElementById("topic-search-input");
+  const query2 = searchInput2.value.trim();
+  /*if (!query) {
+    alert("Please enter a topic to search for.");
+    return;
+  }*/
+  
+  const api_url2 = `https://api.github.com/search/repositories?q=topic:${query2}&sort=stars&order=desc`;
+  fetch(api_url2)
+    .then(response => response.json())
+    .then(data => {
+      const searchResults2 = document.getElementById("search-results");
+      searchResults2.innerHTML = "";
+      for (const repo of data.items) {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = repo.html_url;
+        a.target = "_blank";
+        a.textContent = repo.full_name;
+        li.appendChild(a);
+        searchResults2.appendChild(li);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      alert("There was an error retrieving the search results.");
+    });
+}
+
+function generateTab3Content() {
+}
+
+// Define function to open a tab
+function openTab(evt, tabName) {
+  // Declare variables
+  let i, tabcontent, tablinks;
+
+  // Get all elements with class="tabcontent" and hide them
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  // Get all elements with class="tablinks" and remove the class "active"
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  // Show the current tab, and add an "active" class to the button that opened the tab
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+
+  // Generate the content for the current tab
+  let content;
+  switch (tabName) {
+    case "Tab1":
+      content = generateTab1Content();
+      document.getElementById("tab1Content").innerHTML = content;
+      break;
+    case "Tab2":
+      content = generateTab2Content();
+      document.getElementById("tab2Content").innerHTML = content;
+      break;
+    case "Tab3":
+      content = generateTab3Content();
+      document.getElementById("tab3Content").innerHTML = content;
+      break;
+    default:
+      console.log("Error: Invalid tab name");
+  }
+}
+
+</script>
+
+
+</body>
+</html>
